@@ -1,0 +1,18 @@
+{
+  "name": "MurkingDiscordBot",
+  "version": "1.0.0",
+  "description": "For server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "nix",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/rest": "^0.2.0-canary.0",
+    "discord-api-types": "^0.26.1",
+    "discord.js": "^12.5.3",
+    "node-fetch": "^2.6.1"
+  }
+}
