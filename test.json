@@ -1,12 +1,97 @@
 {
-     "Might Guy": {
-        "month": "Jan",
-        "day": "23",
-        "id": "Might Guy"
-    },
-    "Nachin": {
-        "month": "Jan",
-        "day": "23",
-        "id": "Nachin"
-    }
+    "Might Guy": {
+       "month": "Jan",
+       "day": "01",
+       "id": "Might Guy"
+   },
+   "Cynthia": {
+       "month": "Jan",
+       "day": "03",
+       "id": "Cynthia"
+   },
+   "Akane": {
+       "month": "Jan",
+       "day": "10",
+       "id": "Akane"
+   },
+   "Eddie": {
+       "month": "Jan",
+       "day": "21",
+       "id": "Eddie"
+   },
+   "Nachin": {
+       "month": "Jan",
+       "day": "30",
+       "id": "Nachin"
+   },
+   "Kat": {
+       "month": "Feb",
+       "day": "05",
+       "id": "Kat"
+   },
+   "Obito": {
+       "month": "Feb",
+       "day": "10",
+       "id": "Obito"
+   },
+   "Tobirama": {
+       "month": "Feb",
+       "day": "19",
+       "id": "Akane"
+   },
+   "Konan": {
+       "month": "Feb",
+       "day": "20",
+       "id": "Konan"
+   },
+   "Nam": {
+       "month": "Feb",
+       "day": "27",
+       "id": "Nam"
+   },
+   "Fantomex": {
+       "month": "Feb",
+       "day": "29",
+       "id": "Fantomex"
+   },
+   "Sang": {
+       "month": "Mar",
+       "day": "01",
+       "id": "Sang"
+   },
+   "Jak": {
+       "month": "Mar",
+       "day": "01",
+       "id": "Jak"
+   },
+   "Lurcher": {
+       "month": "Mar",
+       "day": "07",
+       "id": "Lurcher"
+   },
+   "Martha": {
+       "month": "Mar",
+       "day": "13",
+       "id": "Martha"
+   },
+   "Yuuji": {
+       "month": "Mar",
+       "day": "20",
+       "id": "Yuuji"
+   },
+   "Warwick": {
+       "month": "Mar",
+       "day": "27",
+       "id": "Warwick"
+   },
+   "Mayuri": {
+       "month": "Mar",
+       "day": "30",
+       "id": "Mayuri"
+   },
+   "Irena / Joe": {
+       "month": "Apr",
+       "day": "13",
+       "id": "Irena / Joe"
+   }
 }

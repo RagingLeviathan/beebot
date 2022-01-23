@@ -29,12 +29,12 @@ function birthdayCheck() {
           let fetchedDate = data[key].month + ' ' + data[key].day;
 
           if (trimmed === fetchedDate) {
-            client.channels.cache.get(process.env.SERVER_BIRTHDAYS_CID).send('<@'+ process.env.ID_1 +'> <@' + process.env.ID_2 + '> Hello there! It\'s ' + data[key].id + '\'s birthday! 🎂 ');
-
+            console.log('found : ' + data[key].id);
+            client.channels.cache.get(process.env.SERVER_BIRTHDAYS_CID).send('<@' + process.env.ID_1 + '> <@' + process.env.ID_2 + '> Hello there! It\'s **' + data[key].id + '**\'s birthday! 🎂 ');
           }
 
           if (!(trimmed === fetchedDate)) {
-              console.log('No birthdays found today!!!');
+            //console.log('No birthdays found today!!!');
           }
         }
       }
@@ -54,13 +54,12 @@ client.on("ready", () => {
 
     if (hour == 11) {
       console.log('About to post a birthday!!!');
-      birthdayCheck();
-      clearInterval(interval); //
+      birthdayCheck();  //daily birthday check
+      clearInterval(interval); //stop for day after checking
     }
   }, 1000); // check once a minute
 
 })
-
 
 client.on("message", msg => {
 
@@ -73,38 +72,46 @@ client.on("message", msg => {
     const fs = require('fs');
     let data = '';
     let bday = '';
-    const target = "Might Guy";
 
-
+    //ingesting json file
     fs.readFile("./test.json", "utf8", (err, jsonString) => {
       if (err) {
         console.log("File read failed:", err);
       } else {
         data = JSON.parse(jsonString);
+        let fetchedDate = '';
+        let hasMatch = false;
 
         for (var key in data) {
-          if (data.hasOwnProperty(key)) {
-            let fetchedDate = data[key].month + ' ' + data[key].day;
-            console.log(data[key].month + ' ' + data[key].day);
+       
+            if (data.hasOwnProperty(key)) {
+              fetchedDate = data[key].month + ' ' + data[key].day;
 
-            if (trimmed === fetchedDate) {
-              let exampleEmbed = new Discord.MessageEmbed().setTitle('It\'s ' + data[key].id + '\'s birthday! 🎂 ');
-              exampleEmbed.setColor('#5dc4ff');
-              msg.channel.send(exampleEmbed);
+              //comparing current day with birthday in json file
+              if (trimmed === fetchedDate) {
+                hasMatch = true;
+                let exampleEmbed = new Discord.MessageEmbed().setTitle('It\'s *' + data[key].id + '*\'s birthday! 🎂 ').setColor('#5dc4ff');
+                msg.channel.send(exampleEmbed);
+              } 
             }
 
-            if (!(trimmed === fetchedDate)) {
-              const exampleEmbed = new Discord.MessageEmbed().setTitle('No muses celebrate their birthday today!');
-              exampleEmbed.setColor('#fcfc55');
-              msg.channel.send(exampleEmbed);
-              exit;
-            }
-          }
         }
+
+        //if no matches found
+        if (!hasMatch) {
+             const exampleEmbed = new Discord.MessageEmbed().setTitle('No muses celebrate their birthday today!');
+            exampleEmbed.setColor('#fcfc55');
+            msg.channel.send(exampleEmbed);
+            return false;
+        }
+
       }
     });
 
   }
+
+  //todo
+  //add function to display list of birthdays this month
 
   //testing sending custom emoji
   //to find custom emoji code do;
@@ -136,7 +143,6 @@ client.on("message", msg => {
     exampleEmbed.setColor('#b8a5ff');
     msg.channel.send(exampleEmbed);
   };
-
 
   //testing sending gifs
   if (msg.content === "$bees") {
