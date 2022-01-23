@@ -1,7 +1,7 @@
 {
   "name": "MurkingDiscordBot",
-  "version": "1.0.0",
-  "description": "For server",
+  "version": "1.0.1",
+  "description": "Birthday bot for server",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,8 +11,11 @@
   "license": "ISC",
   "dependencies": {
     "@discordjs/rest": "^0.2.0-canary.0",
+    "@replit/database": "^2.0.1",
+    "csv-parse": "^5.0.4",
     "discord-api-types": "^0.26.1",
     "discord.js": "^12.5.3",
+    "express": "^4.17.2",
     "node-fetch": "^2.6.1"
   }
 }
