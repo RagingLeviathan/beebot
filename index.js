@@ -20,13 +20,15 @@ let dontPingFlag = false;
  * function for automatically checking if there are birthdays today
  */
 let data = '';
-fs.readFile("./birthdays.json", "utf8", (err, jsonString) => {
-  if (err) {
-    console.log("File read failed:", err);
-  } else {
-    data = JSON.parse(jsonString);
-}
-});
+
+  //load every time birthdayCheck runs; so once a day?
+  fs.readFile("./birthdays.json", "utf8", (err, jsonString) => {
+    if (err) {
+      console.log("File read failed:", err);
+    } else {
+      data = JSON.parse(jsonString);
+  }
+  });
 
 let birthday_found_today = false;
 
@@ -41,6 +43,12 @@ let birthday_found_today = false;
  */
 function birthdayCheck() {
   console.log('in birthdaycheck!');
+
+
+
+  const d = new Date();
+  let text = d.toString();
+  let trimmed = text.substring(4, 10);
 
   //todo improve this for next year
   if (trimmed === "May 20") {
@@ -69,6 +77,7 @@ function birthdayCheck() {
       }
 
   //viewing data array with flags attached
+  console.log('checking data array; ');
   console.log(data);
 
   //in theory, this should loop through data 
@@ -108,14 +117,14 @@ function runDailyTask(hour, task) {
   const targetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, 0, 0, 0);
   const timeUntilTarget = targetTime.getTime() - now.getTime();
   console.log(hour);
-  if (timeUntilTarget < 0) {
+  if (timeUntilTarget < 11) {
     // The target time has already passed today, schedule for tomorrow
     console.log('time passed');
     targetTime.setDate(targetTime.getDate() + 1);
   }
 
-  // Check if targetTime is 12 am
-  if (targetTime.getHours() === 0) {
+  // Check if targetTime is 11 am
+  if (targetTime.getHours() === 11) {
     console.log('triggered once');
     task();
     return; // Exit function for the day
@@ -131,7 +140,7 @@ function runDailyTask(hour, task) {
 client.on("ready", () => {
 
   // Call the function to start running the task
-runDailyTask(0, () => {
+runDailyTask(11, () => {
   birthdayCheck();
 });
 
