@@ -12,9 +12,15 @@ const client = new Discord.Client();
 const fs = require('fs');
 const path = require('path');
 const { exit } = require("process");
+const schedule = require('node-schedule');
+const https = require("https");
+const axios = require("axios");
+const { json } = require("body-parser");
 
 let textLog = [];
 let dontPingFlag = false;
+//const processedBday = './processedBirthday.json';
+const processedBday = './processedBirthday.json';
 //todo make function more reuseable
 /***
  * function for automatically checking if there are birthdays today
@@ -22,12 +28,26 @@ let dontPingFlag = false;
 let data = '';
 
   //load every time birthdayCheck runs; so once a day?
-  fs.readFile("./birthdays.json", "utf8", (err, jsonString) => {
+  //fs.readFile("./birthdays.json", "utf8", (err, jsonString) => {
+  fs.readFileSync("./processedBirthday.json", "utf8", (err, jsonString) => {
     if (err) {
       console.log("File read failed:", err);
     } else {
       data = JSON.parse(jsonString);
   }
+  });
+
+
+  //initial load of entire bee bot
+  //loading from external site
+  const file = fs.createWriteStream("fromrl.json");
+ // https.get("https://ragingleviathan.info/things/processedBirthday.json", response => {
+  https.get("https://ragingleviathan.info/things/testjson.json", response => {
+    var stream = response.pipe(file);
+  
+    stream.on("finish", function() {
+      console.log("done");
+    });
   });
 
 let birthday_found_today = false;
@@ -44,7 +64,20 @@ let birthday_found_today = false;
 function birthdayCheck() {
   console.log('in birthdaycheck!');
 
+   //loading from external site
+   const file = fs.createWriteStream("fromrl.json");
+   https.get("https://ragingleviathan.info/things/processedBirthday.json", response => {
+     var stream = response.pipe(file);
+   
+     stream.on("finish", function() {
+       console.log("done");
+     });
+   });
 
+   const fileData = fs.readFileSync("./fromrl.json", "utf8");
+
+  //turn into js array
+  data = JSON.parse(fileData);
 
   const d = new Date();
   let text = d.toString();
@@ -73,76 +106,93 @@ function birthdayCheck() {
 
           //add found flag to birthdays array
           data[key].flag = birthday_found_today;
+
+
+          var dataJson = JSON.stringify(data, null, 2);
+          fs.writeFileSync('./processedBirthday.json', dataJson, function writeJSON(err) {
+            if (err) return console.log(err);
+            console.log(dataJson);
+            console.log('writing updated flags to ' + './processedBirthday.json');
+          });
         }
       }
 
-  //viewing data array with flags attached
-  console.log('checking data array; ');
-  console.log(data);
+ 
 
   //in theory, this should loop through data 
-  //& send message for any birthdays with birthday_found_today = true
+  //& send message for any birthdays with:
+  //flag = true [flagged as a birthday happening today]
+  //logged = false [birthday hasn't been posted today]
   for (var key in data) {
     //console.log('key is: ' +  key);
     if (data.hasOwnProperty(key)) {
       //console.log('key is: ' + key);
-      if (data[key].flag === true) {
+      if (data[key].flag === true && data[key].logged === false) {
         console.log('found : ' + data[key].id);
 
         //send message to discord
         let bdayMsg = '<@' + process.env.ID_1 + '> <@' + process.env.ID_2 + '> Hello there! It\'s **' + data[key].id + '**\'s birthday! 🎂 ';
         client.channels.cache.get(process.env.SERVER_BIRTHDAYS_CID).send(bdayMsg);
+        console.log('sent message!');
 
         //log message in logs file
         var readmessagefile = fs.readFileSync('logs.txt', 'utf-8');
         var writemessagefile = fs.writeFileSync('logs.txt', 'About to post a birthday! Details are : ' + bdayMsg + '\r\n' + readmessagefile);
+
+        data[key].logged = true;
+
+        var dataJson = JSON.stringify(data, null, 2);
+        //write to different file as processed backup
+        fs.writeFileSync('./processedBirthday.json', dataJson, function writeJSON(err) {
+          if (err) return console.log(err);
+          console.log(dataJson);
+          console.log(writemessagefile);
+          console.log('writing updated logged to ' + './processedBirthday.json');
+        });
+
+
+
+         //viewing data array with flags and logged attached
+  console.log('checking array with flags and logged attached data array; ');
+  console.log(data);
       }
     }
   }
+
+
 }
 
-/**
- * 
- * runDailyTask()
- * 
- * function that will once a day, calling task (birthdayCheck)
- * & sending bee bot alert as needed
- * 
- * @param {*} hour 
- * @param {*} task 
- * @returns 
- */
-function runDailyTask(hour, task) {
-  const now = new Date();
-  const targetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, 0, 0, 0);
-  const timeUntilTarget = targetTime.getTime() - now.getTime();
-  console.log(hour);
-  if (timeUntilTarget < 11) {
-    // The target time has already passed today, schedule for tomorrow
-    console.log('time passed');
-    targetTime.setDate(targetTime.getDate() + 1);
-  }
-
-  // Check if targetTime is 11 am
-  if (targetTime.getHours() === 11) {
-    console.log('triggered once');
-    task();
-    return; // Exit function for the day
-  }
-
-  //scheduling interval until next day
-  setTimeout(() => {
-    runDailyTask(hour, task);
-  }, timeUntilTarget);
-}
 
 //initiating discord...
 client.on("ready", () => {
 
-  // Call the function to start running the task
-runDailyTask(11, () => {
+
+            //cron'd for 12pm every day
+schedule.scheduleJob('14 19 * * *', function(){
+  //console.log('The answer to life, the universe, and everything!');
+  console.log('running birthday check...');
   birthdayCheck();
+  
 });
+
+
+
+        //cron'd for 5 mins past every hour
+schedule.scheduleJob('*/5 */1 * * *', function(){
+
+ //loading from external site
+ const file = fs.createWriteStream("fromrl.json");
+ https.get("https://ragingleviathan.info/things/testjson.json", response => {
+   var stream = response.pipe(file);
+ 
+   stream.on("finish", function() {
+     console.log("done");
+   });
+ });
+ const fileData = fs.readFileSync("./fromrl.json", "utf8");
+});
+
+
 
   console.log(`Logged in as ${client.user.tag}!`)
   // client.user.setAvatar('./bee_bot.jpg')
